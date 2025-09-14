@@ -29,16 +29,19 @@ jobs:
         run: npm run build || echo "No build script"
 
       # 5️⃣ Login to Azure using Service Principal (with password)
-      - name: Login to Azure
+      - name: Azure login
         uses: azure/login@v2
         with:
-          creds: |
-            {
-              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
-              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
-              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
-              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-            }
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
 
       # 6️⃣ Deploy to Azure Web App
       - name: Deploy to Azure Web App
@@ -47,3 +50,4 @@ jobs:
           app-name: democrudapp       # Replace with your Azure Web App name
           slot-name: Production
           package: .
+
